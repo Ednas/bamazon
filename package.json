@@ -1,0 +1,29 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "Shopping on the terminal with Bamazon",
+  "main": "BamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ednas/bamazon.git"
+  },
+  "keywords": [
+    "npm",
+    "mysql",
+    "inquirer"
+  ],
+  "author": "Edna Jonsson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ednas/bamazon/issues"
+  },
+  "homepage": "https://github.com/Ednas/bamazon#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^6.0.0",
+    "mysql": "^2.16.0"
+  }
+}

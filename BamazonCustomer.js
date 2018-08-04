@@ -40,8 +40,7 @@ function loadProcucts() {
         for (var i = 0; i < res.length; i++) {
             table.push([res[i].ItemID, res[i].ProductName, res[i].Price, res[i].StockQuanitiy]);
         }
-        // console.table(['Available Inventory'], productArray);
-        // console.log("-----------------------------------");
+        console.log(table.toString());
         promptCustomer();
     });
 }
@@ -69,13 +68,11 @@ function promptCustomer(inventory) {
                 "Pens",
             ]
         }])
-        // .then(function(user) {
-        //     console.log(user.option);
         .then(function(val) {
             // Check if the user wants to quit the program
             checkIfShouldExit(val.option);
             var choiceId = parseInt(val.option);
-            console.log(val + " is the value and " + val.option + " is selected option");
+            console.log(val.option + " is selected option");
             process.exit(0);
         });
 }
@@ -94,9 +91,3 @@ function checkIfShouldExit(choice) {
 //First message = ID of the product they would like to buy
 
 //Second message = how many of the product they would like to buy
-
-// Check if your store has enough quantity of the product to meet the customer's request. If not, you should respond to the user by saying: "Insufficient quantity" and prevent the order from going through.
-
-// If your store DOES have enough of the product to meet the customer's request, you should fulfill their order. This means that you should show them the total cost of their puchase. Then update the SQL database to reflect the remaining quantity.
-
-//The following is from class to use for this assignment

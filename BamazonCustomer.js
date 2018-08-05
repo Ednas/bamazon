@@ -52,7 +52,7 @@ function promptCustomer(inventory) {
     inquirer.prompt([{
             type: "list",
             name: "option",
-            message: ("What is the product ID of the item would you like to buy?".rainbow),
+            message: ("What is the product ID of the item would you like to buy?".green),
             choices: inventory
         }])
         .then(function(val) {
@@ -68,7 +68,9 @@ function promptCustomer(inventory) {
             // If there is a product with the name the user chose, prompt the customer for a desired quantity
             if (product) {
                 console.log("There is a product " + product + " available for purchase");
-                //     // Pass the chosen product to promptCustomerForQuantity
+                //   Pass the chosen product to promptCustomerForQuantity
+                promptCustomerForQuantity(product);
+
             } else {
                 //     // Otherwise let them know the item is not in the inventory, re-run loadProducts
                 console.log("\nThat item is not in the inventory. " + product);
@@ -93,6 +95,17 @@ function checkInventory(choiceProduct, inventory) {
     return null;
 }
 
+function promptCustomerForQuantity(product) {
+    inquirer.prompt([{
+            type: "list",
+            name: "quanitity",
+            message: ("How many would you like to buy?".rainbow),
+            choices: ['1', '2', '3']
+        }])
+        .then(function(val) {
+            console.log(val)
+        })
+};
 
 //2 messages
 

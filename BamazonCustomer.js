@@ -36,50 +36,59 @@ function loadProcucts() {
         });
 
         var productArray = [];
+        var pName = [];
+
         for (var i = 0; i < res.length; i++) {
             table.push(
                 [res[i].ItemID, res[i].ProductName, res[i].Price, res[i].StockQuanitiy]
+
             );
-            productArray.push(res[i].ProductName);
+            productArray.push(
+                [res[i].ItemID, res[i].ProductName, res[i].Price, res[i].StockQuanitiy]
+            );
+            pName.push(res[i].ProductName);
         }
         console.log("             Welcome to the Nooga Delivery CLI Store".america);
         console.log("                    Our Available inventory      ");
         console.log("********************************************************************");
         console.log(table.toString());
-        promptCustomer(productArray);
+
+        promptCustomer(pName, productArray);
     });
 }
 
-function promptCustomer(inventory) {
-    inquirer.prompt([{
+function promptCustomer(inventory, table) {
+    inquirer
+        .prompt([{
             type: "list",
             name: "option",
-            message: ("What is the product ID of the item would you like to buy?".green),
+            message: ("What is the name of the item would you like to buy?".green),
             choices: inventory
         }])
         .then(function(val) {
-            // TODO: Check if the user wants to quit the program (currently not working)
-            // checkIfExit(val);
-
-
             var choiceProduct = val.option;
-            console.log(choiceProduct + " Chosen option");
-            var product = checkInventory(choiceProduct, inventory).red;
 
+            for (var i = 0; i < table.length; i++) {
+                if (table[i][1] === choiceProduct) {
+                    console.log(choiceProduct + " Chosen option");
+                    var product = checkInventory(choiceProduct, table[i]);
+                    console.log(product + " is line 79")
+                }
+            }
 
             // If there is a product with the name the user chose, prompt the customer for a desired quantity
             if (product) {
-                console.log("There is a product " + product + " available for purchase");
+                console.log("There is a product " + choiceProduct.red + " available for purchase");
                 //   Pass the chosen product to promptCustomerForQuantity
-                promptCustomerForQuantity(product);
+                promptCustomerForQuantity(product, table);
 
             } else {
                 //     // Otherwise let them know the item is not in the inventory, re-run loadProducts
-                console.log("\nThat item is not in the inventory. " + product);
-                // loadProducts();
+                console.log("\nThat item is not in the inventory. " + product).red;
+                loadProducts();
             }
 
-            process.exit(0);
+            // process.exit(0);
         });
 }
 
@@ -87,24 +96,81 @@ function promptCustomer(inventory) {
 
 // Check to see if the product the user chose exists in the inventory
 function checkInventory(choiceProduct, inventory) {
-    for (var i = 0; i < inventory.length; i++) {
-        if (choiceProduct === inventory[i]) {
-            // If a matching product is found, return the product
-            return inventory[i];
-        }
+    console.log(choiceProduct + " Chosen | " + inventory[3] + " available");
+    var currentInventory = inventory[3];
+    for (var i = 0; i < currentInventory; i++) {
+        if (choiceProduct === currentInventory[i]) {}
+        // If a matching product is found, return the product
+        return currentInventory;
     }
     // Otherwise return null
     return null;
 }
 
-function promptCustomerForQuantity(product) {
-    inquirer.prompt([{
-            type: "list",
-            name: "quanitity",
-            message: ("How many would you like to buy?".green),
-            choices: ['1', '2', '3']
-        }])
-        .then(function(val) {
+var quantityQuestions = [{
+    type: "input",
+    name: "quantity",
+    message: ("How many would you like to buy?".green),
+    validate: function(val) {
+        return !isNaN(val) || val.toLowerCase() === "q";
+    }
+}];
+
+
+function promptCustomerForQuantity(product, table) {
+    inquirer
+        .prompt(quantityQuestions)
+        .then((val) => {
+            checkIfExit(val.quantity);
+
+            var quantity = parseInt(val.quantity);
+
+            // // If there isn't enough of the chosen product and quantity, let the user know and re-run loadProducts
+            // if (quantity > product.StockQuanitiy) {
+            //     console.log("\nInsufficient quantity!");
+            //     loadProducts();
+            // } else {
+            //     // Otherwise run makePurchase, give it the product information and desired quantity to purchase
+            //     console.log("Purchased!");
+            //     makePurchase(product, quantity);
+            // }
+
+            // console.log(JSON.stringify(answers, null, '  '));
+            console.log(quantity + " Is the Quantity requested");
+            console.log(table[0].StockQuanitiy + " is what?");
+            console.log(val.StockQuanitiy + " is the quantity on hand");
             console.log(val);
+            process.exit(0);
         });
 }
+
+// function checkQuanityOnHand() {
+//     con.query('SELECT * FROM products;', function(err, res) {
+
+//             }
+
+// Purchase the desired quantity of the desired item
+function makePurchase(product, quantity) {
+    con.query(
+        "UPDATE products SET stock_quantity = stock_quantity - ? WHERE item_id = ?", [quantity, product.item_id],
+        function(err, res) {
+            // Let the user know the purchase was successful, re-run loadProducts
+            console.log("\nSuccessfully purchased " + quantity + " " + product.product_name + "'s!");
+            loadProcucts();
+        }
+    );
+}
+
+function checkIfExit(choice) {
+    if (choice.toLowerCase() === "q") {
+        // Log a message and exit the current node process
+        console.log("Goodbye!");
+        process.exit(0);
+    }
+}
+
+
+
+
+// console.log(table[1][1] + " is name");
+// console.log(table[1][3] + " is the quantity on hand");

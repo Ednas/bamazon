@@ -42,7 +42,9 @@ function loadProcucts() {
             );
             productArray.push(res[i].ProductName);
         }
-
+        console.log("             Welcome to the Nooga Delivery CLI Store".america);
+        console.log("                    Our Available inventory      ");
+        console.log("********************************************************************");
         console.log(table.toString());
         promptCustomer(productArray);
     });
@@ -61,7 +63,7 @@ function promptCustomer(inventory) {
 
 
             var choiceProduct = val.option;
-            console.log(choiceProduct + " Chosen option")
+            console.log(choiceProduct + " Chosen option");
             var product = checkInventory(choiceProduct, inventory).red;
 
 
@@ -99,16 +101,10 @@ function promptCustomerForQuantity(product) {
     inquirer.prompt([{
             type: "list",
             name: "quanitity",
-            message: ("How many would you like to buy?".rainbow),
+            message: ("How many would you like to buy?".green),
             choices: ['1', '2', '3']
         }])
         .then(function(val) {
-            console.log(val)
-        })
-};
-
-//2 messages
-
-//First message = ID of the product they would like to buy
-
-//Second message = how many of the product they would like to buy
+            console.log(val);
+        });
+}

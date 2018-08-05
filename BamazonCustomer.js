@@ -3,7 +3,7 @@
 
 var inquirer = require('inquirer');
 var Table = require('cli-table');
-
+var colors = require('colors');
 
 //connects to the Bamazon_db database
 var mysql = require('mysql');
@@ -26,58 +26,45 @@ function loadProcucts() {
     con.query('SELECT * FROM products;', function(err, res) {
         if (err) throw err;
 
-        //creates a table for the information from the mysql database to be placed
-        var table = new Table({
-            head: ['Item Id#', 'Product Name', 'Price', 'Quantity'],
-            style: {
-                head: ['blue'],
-                compact: false,
-                colAligns: ['center'],
-            }
-        });
-
-        // var productArray = [];
+        var productArray = [];
         for (var i = 0; i < res.length; i++) {
-            table.push([res[i].ItemID, res[i].ProductName, res[i].Price, res[i].StockQuanitiy]);
+            productArray.push(res[i].ProductName);
         }
-        console.log(table.toString());
-        promptCustomer();
+        promptCustomer(productArray);
     });
 }
 
-function promptCustomer(inventory) {
+function promptCustomer(productArray) {
     inquirer.prompt([{
             type: "list",
             name: "option",
-            message: "What product would you like to buy?",
-            validate: function(val) {
-                return !isNaN(val) || val.toLowerCase() === "q";
-            },
-            choices: [
-                "Black Purse",
-                "Velvet",
-                "The Catcher in the Rye",
-                "Staples",
-                "i-Phone",
-                "Go Pro Camera",
-                "X-Box 360",
-                "Girl with the Dragon tattoo",
-                "Wooden spindle",
-                "Dress",
-                "Pants",
-                "Pens",
-            ]
+            message: ("What is the product ID of the item would you like to buy?".rainbow),
+            choices: productArray
         }])
         .then(function(val) {
             // Check if the user wants to quit the program
-            checkIfShouldExit(val.option);
-            var choiceId = parseInt(val.option);
+            checkIfExit(val.option);
+            // var choiceId = (val.option).toString();
+            // var product = checkInventory(choiceId, inventory);
+
             console.log(val.option + " is selected option");
+
+
+            // // If there is a product with the id the user chose, prompt the customer for a desired quantity
+            // if (product) {
+            //     // Pass the chosen product to promptCustomerForQuantity
+            //     promptCustomerForQuantity(product);
+            // } else {
+            //     // Otherwise let them know the item is not in the inventory, re-run loadProducts
+            //     console.log("\nThat item is not in the inventory.");
+            //     loadProducts();
+            // }
+
             process.exit(0);
         });
 }
 
-function checkIfShouldExit(choice) {
+function checkIfExit(choice) {
     if (choice.toLowerCase() === "q") {
         // Log a message and exit the current node process
         console.log("Goodbye!");

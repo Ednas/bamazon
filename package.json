@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Ednas/bamazon#readme",
   "dependencies": {
     "cli-table": "^0.3.1",
+    "colors": "^1.3.1",
     "console.table": "^0.10.0",
     "inquirer": "^6.0.0",
     "mysql": "^2.16.0"

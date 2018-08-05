@@ -16,7 +16,7 @@ var con = mysql.createConnection({
 });
 
 //shows if you're connected or not
-con.connect(function(err, results, fields) {
+con.connect(function(err, res, fields) {
     if (err) throw err;
     loadProcucts();
 });
@@ -25,51 +25,72 @@ function loadProcucts() {
     //Display All Items available for sale
     con.query('SELECT * FROM products;', function(err, res) {
         if (err) throw err;
+        //creates a table for the information from the mysql database to be placed
+        var table = new Table({
+            head: ['Item Id#', 'Product Name', 'Price', 'Quantity'],
+            style: {
+                head: ['yellow'],
+                compact: false,
+                colAligns: ['center'],
+            }
+        });
 
         var productArray = [];
         for (var i = 0; i < res.length; i++) {
+            table.push(
+                [res[i].ItemID, res[i].ProductName, res[i].Price, res[i].StockQuanitiy]
+            );
             productArray.push(res[i].ProductName);
         }
+
+        console.log(table.toString());
         promptCustomer(productArray);
     });
 }
 
-function promptCustomer(productArray) {
+function promptCustomer(inventory) {
     inquirer.prompt([{
             type: "list",
             name: "option",
             message: ("What is the product ID of the item would you like to buy?".rainbow),
-            choices: productArray
+            choices: inventory
         }])
         .then(function(val) {
-            // Check if the user wants to quit the program
-            checkIfExit(val.option);
-            // var choiceId = (val.option).toString();
-            // var product = checkInventory(choiceId, inventory);
-
-            console.log(val.option + " is selected option");
+            // TODO: Check if the user wants to quit the program (currently not working)
+            // checkIfExit(val);
 
 
-            // // If there is a product with the id the user chose, prompt the customer for a desired quantity
-            // if (product) {
-            //     // Pass the chosen product to promptCustomerForQuantity
-            //     promptCustomerForQuantity(product);
-            // } else {
-            //     // Otherwise let them know the item is not in the inventory, re-run loadProducts
-            //     console.log("\nThat item is not in the inventory.");
-            //     loadProducts();
-            // }
+            var choiceProduct = val.option;
+            console.log(choiceProduct + " Chosen option")
+            var product = checkInventory(choiceProduct, inventory).red;
+
+
+            // If there is a product with the name the user chose, prompt the customer for a desired quantity
+            if (product) {
+                console.log("There is a product " + product + " available for purchase");
+                //     // Pass the chosen product to promptCustomerForQuantity
+            } else {
+                //     // Otherwise let them know the item is not in the inventory, re-run loadProducts
+                console.log("\nThat item is not in the inventory. " + product);
+                // loadProducts();
+            }
 
             process.exit(0);
         });
 }
 
-function checkIfExit(choice) {
-    if (choice.toLowerCase() === "q") {
-        // Log a message and exit the current node process
-        console.log("Goodbye!");
-        process.exit(0);
+
+
+// Check to see if the product the user chose exists in the inventory
+function checkInventory(choiceProduct, inventory) {
+    for (var i = 0; i < inventory.length; i++) {
+        if (choiceProduct === inventory[i]) {
+            // If a matching product is found, return the product
+            return inventory[i];
+        }
     }
+    // Otherwise return null
+    return null;
 }
 
 

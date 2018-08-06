@@ -21,8 +21,6 @@ con.connect(function(err, res, fields) {
     loadProcucts();
 });
 
-
-
 function loadProcucts() {
     //Display All Items available for sale
     con.query('SELECT * FROM products;', function(err, res) {
@@ -36,10 +34,9 @@ function loadProcucts() {
                 colAligns: ['center'],
             }
         });
-
         var productArray = [];
         var pName = [];
-
+        //Creates the pretty table and also array to get the product information from
         for (var i = 0; i < res.length; i++) {
             table.push(
                 [res[i].ItemID, res[i].ProductName, res[i].Price, res[i].StockQuanitiy]
@@ -69,11 +66,11 @@ function promptCustomer(inventory, table) {
         }])
         .then(function(val) {
             var choiceProduct = val.option;
-
+            var product;
             for (var i = 0; i < table.length; i++) {
                 if (table[i][1] === choiceProduct) {
                     console.log(choiceProduct + " Chosen option");
-                    var product = checkInventory(choiceProduct, table[i]);
+                    product = checkInventory(choiceProduct, table[i]);
                 }
             }
 
@@ -122,17 +119,16 @@ function promptCustomerForQuantity(product, choiceProduct) {
             checkIfExit(val.quantity);
 
             var quantity = parseInt(val.quantity);
-            // If there isn't enough of the chosen product and quantity, let the user know and re-run loadProducts
+            // If there isn't enough of the chosen product and quantity, let the user know and offer to shop more
             if (quantity > product) {
                 console.log("\nInsufficient quantity!");
+                shopMore();
                 // loadProducts();
             } else {
                 // Otherwise run makePurchase, give it the product information and desired quantity to purchase
                 console.log("Purchased!");
                 makePurchase(choiceProduct, quantity);
             }
-
-            // console.log(JSON.stringify(answers, null, '  '));
             console.log(quantity + " Is the Quantity requested");
             console.log(product + " is the quantity on hand");
         });
@@ -145,15 +141,12 @@ function makePurchase(choiceProduct, quantity) {
         function(err, res) {
             if (err) throw err;
             console.log(res);
-            // Let the user know the purchase was successful, re-run loadProducts
+            // Let the user know the purchase was successful, offer to shop more
             console.log("\nSuccessfully purchased " + quantity + " " + choiceProduct + "'s!");
-            // loadProcucts();
             shopMore();
         }
     );
 }
-
-
 
 function shopMore() {
     inquirer.prompt(
@@ -171,8 +164,8 @@ function shopMore() {
                 console.log("Thank you for Shopping with us!");
                 process.exit(0);
             }
-        })
-};
+        });
+}
 
 function checkIfExit(choice) {
     if (choice.toLowerCase() === "q") {
@@ -181,9 +174,3 @@ function checkIfExit(choice) {
         process.exit(0);
     }
 }
-
-
-
-
-// console.log(table[1][1] + " is name");
-// console.log(table[1][3] + " is the quantity on hand");

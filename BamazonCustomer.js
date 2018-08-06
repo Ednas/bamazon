@@ -21,6 +21,8 @@ con.connect(function(err, res, fields) {
     loadProcucts();
 });
 
+
+
 function loadProcucts() {
     //Display All Items available for sale
     con.query('SELECT * FROM products;', function(err, res) {
@@ -72,7 +74,6 @@ function promptCustomer(inventory, table) {
                 if (table[i][1] === choiceProduct) {
                     console.log(choiceProduct + " Chosen option");
                     var product = checkInventory(choiceProduct, table[i]);
-                    console.log(product + " is line 79")
                 }
             }
 
@@ -80,18 +81,15 @@ function promptCustomer(inventory, table) {
             if (product) {
                 console.log("There is a product " + choiceProduct.red + " available for purchase");
                 //   Pass the chosen product to promptCustomerForQuantity
-                promptCustomerForQuantity(product, table);
+                promptCustomerForQuantity(product, choiceProduct);
 
             } else {
                 //     // Otherwise let them know the item is not in the inventory, re-run loadProducts
                 console.log("\nThat item is not in the inventory. " + product).red;
                 loadProducts();
             }
-
-            // process.exit(0);
         });
 }
-
 
 
 // Check to see if the product the user chose exists in the inventory
@@ -117,49 +115,64 @@ var quantityQuestions = [{
 }];
 
 
-function promptCustomerForQuantity(product, table) {
+function promptCustomerForQuantity(product, choiceProduct) {
     inquirer
         .prompt(quantityQuestions)
         .then((val) => {
             checkIfExit(val.quantity);
 
             var quantity = parseInt(val.quantity);
-
-            // // If there isn't enough of the chosen product and quantity, let the user know and re-run loadProducts
-            // if (quantity > product.StockQuanitiy) {
-            //     console.log("\nInsufficient quantity!");
-            //     loadProducts();
-            // } else {
-            //     // Otherwise run makePurchase, give it the product information and desired quantity to purchase
-            //     console.log("Purchased!");
-            //     makePurchase(product, quantity);
-            // }
+            // If there isn't enough of the chosen product and quantity, let the user know and re-run loadProducts
+            if (quantity > product) {
+                console.log("\nInsufficient quantity!");
+                // loadProducts();
+            } else {
+                // Otherwise run makePurchase, give it the product information and desired quantity to purchase
+                console.log("Purchased!");
+                makePurchase(choiceProduct, quantity);
+            }
 
             // console.log(JSON.stringify(answers, null, '  '));
             console.log(quantity + " Is the Quantity requested");
-            console.log(table[0].StockQuanitiy + " is what?");
-            console.log(val.StockQuanitiy + " is the quantity on hand");
-            console.log(val);
-            process.exit(0);
+            console.log(product + " is the quantity on hand");
         });
 }
 
-// function checkQuanityOnHand() {
-//     con.query('SELECT * FROM products;', function(err, res) {
-
-//             }
-
 // Purchase the desired quantity of the desired item
-function makePurchase(product, quantity) {
+function makePurchase(choiceProduct, quantity) {
     con.query(
-        "UPDATE products SET stock_quantity = stock_quantity - ? WHERE item_id = ?", [quantity, product.item_id],
+        "UPDATE products SET StockQuanitiy = StockQuanitiy - ? WHERE ProductName = ?", [quantity, choiceProduct],
         function(err, res) {
+            if (err) throw err;
+            console.log(res);
             // Let the user know the purchase was successful, re-run loadProducts
-            console.log("\nSuccessfully purchased " + quantity + " " + product.product_name + "'s!");
-            loadProcucts();
+            console.log("\nSuccessfully purchased " + quantity + " " + choiceProduct + "'s!");
+            // loadProcucts();
+            shopMore();
         }
     );
 }
+
+
+
+function shopMore() {
+    inquirer.prompt(
+            [{
+                type: "list",
+                name: "shop",
+                message: ("Have you finished Shopping?".green),
+                choices: ['Yes', 'No']
+            }]
+        )
+        .then(answers => {
+            if (answers.shop === "No") {
+                loadProcucts();
+            } else {
+                console.log("Thank you for Shopping with us!");
+                process.exit(0);
+            }
+        })
+};
 
 function checkIfExit(choice) {
     if (choice.toLowerCase() === "q") {

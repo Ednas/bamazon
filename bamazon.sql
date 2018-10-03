@@ -9,7 +9,7 @@ create table products (
 	ItemID integer(90) not null,
     ProductName varchar(255) not null,
     DepartmentName varchar(255) not null,
-    Price integer(255) not null,
+    Price DECIMAL(5,2) not null,
     StockQuanitiy integer(100) not null
 );
 

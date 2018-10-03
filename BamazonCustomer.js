@@ -71,6 +71,7 @@ function promptCustomer(inventory, table) {
                 if (table[i][1] === choiceProduct) {
                     console.log(choiceProduct + " Chosen option");
                     product = checkInventory(choiceProduct, table[i]);
+                    var price = table[i][2];
                 }
             }
 
@@ -78,7 +79,7 @@ function promptCustomer(inventory, table) {
             if (product) {
                 console.log("There is a product " + choiceProduct.red + " available for purchase");
                 //   Pass the chosen product to promptCustomerForQuantity
-                promptCustomerForQuantity(product, choiceProduct);
+                promptCustomerForQuantity(product, choiceProduct, price);
 
             } else {
                 //     // Otherwise let them know the item is not in the inventory, re-run loadProducts
@@ -112,7 +113,7 @@ var quantityQuestions = [{
 }];
 
 
-function promptCustomerForQuantity(product, choiceProduct) {
+function promptCustomerForQuantity(product, choiceProduct, price) {
     inquirer
         .prompt(quantityQuestions)
         .then((val) => {
@@ -127,7 +128,7 @@ function promptCustomerForQuantity(product, choiceProduct) {
             } else {
                 // Otherwise run makePurchase, give it the product information and desired quantity to purchase
                 console.log("Purchased!");
-                makePurchase(choiceProduct, quantity);
+                makePurchase(choiceProduct, quantity, price);
             }
             console.log(quantity + " Is the Quantity requested");
             console.log(product + " is the quantity on hand");
@@ -135,14 +136,15 @@ function promptCustomerForQuantity(product, choiceProduct) {
 }
 
 // Purchase the desired quantity of the desired item
-function makePurchase(choiceProduct, quantity) {
+function makePurchase(choiceProduct, quantity, price) {
     con.query(
         "UPDATE products SET StockQuanitiy = StockQuanitiy - ? WHERE ProductName = ?", [quantity, choiceProduct],
         function(err, res) {
             if (err) throw err;
-            console.log(res);
+            // console.log(res);
             // Let the user know the purchase was successful, offer to shop more
             console.log("\nSuccessfully purchased " + quantity + " " + choiceProduct + "'s!");
+            console.log("\nYour total is: $" + price.toFixed(2));
             shopMore();
         }
     );

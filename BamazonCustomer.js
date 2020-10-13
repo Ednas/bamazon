@@ -137,6 +137,7 @@ function promptCustomerForQuantity(product, choiceProduct, price) {
 
 // Purchase the desired quantity of the desired item
 function makePurchase(choiceProduct, quantity, price) {
+    let itemTotal = price * quantity;
     con.query(
         "UPDATE products SET StockQuanitiy = StockQuanitiy - ? WHERE ProductName = ?", [quantity, choiceProduct],
         function(err, res) {
@@ -144,7 +145,8 @@ function makePurchase(choiceProduct, quantity, price) {
             // console.log(res);
             // Let the user know the purchase was successful, offer to shop more
             console.log("\nSuccessfully purchased " + quantity + " " + choiceProduct + "'s!");
-            console.log("\nYour total is: $" + price.toFixed(2));
+            console.log(`Each ${choiceProduct} is ${price.toFixed(2)}`);
+            console.log("\nYour total is: $" + itemTotal.toFixed(2));
             shopMore();
         }
     );

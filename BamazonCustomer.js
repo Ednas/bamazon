@@ -11,7 +11,7 @@ var con = mysql.createConnection({
     host: "127.0.0.1",
     port: 3306,
     user: "root", //Your username
-    password: "coast", //Your password
+    password: "root", //Your password
     database: "Bamazon_db"
 });
 

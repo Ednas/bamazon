@@ -21,6 +21,19 @@ The Bamazon Customer Portal allows users to view the current items available for
   * [colors](https://www.npmjs.com/package/colors)
   * [cli-table](https://www.npmjs.com/package/cli-table)
 
+### Common issue
+
+If you're running into an issue where you get a message to the effect of
+Try running the following command in your MySQL Workbench:
+
+```ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root'; ```
+
+Where ```root``` as your user ```localhost``` as your URL and ```password``` as your password
+
+Then run this query to refresh privileges:
+
+```flush privileges;```
+
 #### License
 
-Copyright 2016 - 2018 University of Central Florida Coding Bootcamp - Edna Jonsson
+Copyright 2016 - 2020 University of Central Florida Coding Bootcamp - Edna Jonsson
